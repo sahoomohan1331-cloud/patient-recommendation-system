@@ -55,15 +55,16 @@ class ComplianceAgent:
             "phi_types_flagged": phi_detected,
             "gdpr_data_minimization": "Verified (Processing limited to clinical decision support)",
             "audit_hash": f"AUDIT-HASH-{audit_hash.upper()}",
-            "regulatory_status": "COMPLIANT_FOR_RESEARCH_AND_DECISION_SUPPORT",
+            "compliance_check": "not_performed",
+            "compliance_note": "This field reports that no formal compliance audit has been performed. See SAFETY.md.",
             "regulatory_disclaimer": (
-                "Triage is an AI clinical decision support system designed to assist healthcare professionals. "
-                "It is not an autonomous diagnostic instrument and does not replace certified clinical judgment."
+                "Triage is an experimental prototype designed for research and workflow exploration only. "
+                "It is not a medical device, is not clinically validated, and does not replace certified clinical judgment. See SAFETY.md."
             )
         }
 
         duration = round((time.time() - start_time) * 1000, 2)
-        summary = f"Audit verification successful. {len(phi_detected)} PHI tokens mitigated. Safe Harbor validated."
+        summary = f"Basic de-identification applied. {len(phi_detected)} PHI tokens mitigated via regex. No formal compliance audit performed."
         trace = AgentExecutionTrace(
             agent_name=self.name,
             role=self.role,
