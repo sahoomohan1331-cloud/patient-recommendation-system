@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triage | Clinical AI & Patient Management Platform</title>
+  <meta name="description" content="Modern, doctor-friendly patient management and medical AI recommendation system inspired by clinical OPD workflows.">
+  
+  <!-- Modern Typography (Inter & DM Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Top App Shell Container -->
+  <div class="app-container">
+    
+    <!-- Top Header Banner (Inspired by Figma Deep Navy Header) -->
+    <header class="doctor-header-card">
+      <div class="doctor-header-top">
+        <div class="doctor-profile-group" id="doctor-profile-btn" title="Doctor Profile & Credentials" style="cursor: pointer;">
+          <div class="doctor-avatar-circle">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=120&auto=format&fit=crop&q=80" alt="Doctor Avatar" class="doc-img" onerror="this.src='/static/doc-fallback.png'">
+            <span class="doc-online-dot"></span>
+          </div>
+          <div class="doctor-greeting">
+            <h1>Hi Dr. Rajesh!</h1>
+            <p>Welcome back • <span class="clinic-name" id="clinic-name-display">Cardiothoracic & Acute OPD Clinic</span></p>
+          </div>
+        </div>
+
+        <div class="header-right-actions">
+          <div class="stat-pill-group">
+            <div class="kpi-mini clickable-kpi" data-filter-target="all" title="Filter Queue: All Patients">
+              <span class="kpi-val" id="kpi-total-patients">39</span>
+              <span class="kpi-lbl">Total OPD</span>
+            </div>
+            <div class="kpi-divider"></div>
+            <div class="kpi-mini clickable-kpi" data-filter-target="emergent" title="Filter Queue: Emergent & Critical">
+              <span class="kpi-val text-emergent" id="kpi-active-triage">15</span>
+              <span class="kpi-lbl">Emergent/Urgent</span>
+            </div>
+            <div class="kpi-divider"></div>
+            <div class="kpi-mini clickable-kpi" data-filter-target="routine" title="Filter Queue: Routine / Dispatched">
+              <span class="kpi-val text-success" id="kpi-ai-recommendations">24</span>
+              <span class="kpi-lbl">AI Dispatched</span>
+            </div>
+          </div>
+
+          <div class="header-action-buttons">
+            <a href="/patient" class="patient-mode-header-btn" title="Open Patient Easy Mode (चित्र व आवाज़ सहायता)">
+              <i class="fa-solid fa-hands-holding-child"></i>
+              <span>Patient Mode (चित्र / बोलकर)</span>
+            </a>
+            <button id="theme-toggle-btn" class="icon-circle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+              <i class="fa-solid fa-moon" id="theme-icon"></i>
+            </button>
+            
+            <!-- Notifications Dropdown Wrap -->
+            <div class="action-dropdown-wrap">
+              <button id="btn-notifications" class="icon-circle-btn has-badge" title="Notifications" aria-label="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge-count" id="notif-badge-count">3</span>
+              </button>
+              <div id="notifications-dropdown" class="header-dropdown notifications-menu" style="display: none;">
+                <div class="dropdown-header">
+                  <div class="dropdown-title"><i class="fa-solid fa-bell text-primary"></i> Clinical Alerts</div>
+                  <button type="button" class="dropdown-action-link" id="btn-mark-all-read">Mark all as read</button>
+                </div>
+                <div class="notifications-list" id="notifications-list">
+                  <div class="notification-item unread critical" data-patient-id="PT-77014">
+                    <div class="notif-icon notif-icon-red"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <div class="notif-body">
+                      <div class="notif-title">Critical ESI 2 Alert • Robert Miller</div>
+                      <div class="notif-desc">Crushing retrosternal chest pain radiating to left arm. Troponin-I protocol initiated.</div>
+                      <div class="notif-time">2 mins ago</div>
+                    </div>
+                  </div>
+                  <div class="notification-item unread info">
+                    <div class="notif-icon notif-icon-blue"><i class="fa-solid fa-robot"></i></div>
+                    <div class="notif-body">
+                      <div class="notif-title">Ollama AI Co-Pilot Online</div>
+                      <div class="notif-desc">Model <code>qwen3-coder:30b</code> active on-device with zero cloud telemetry.</div>
+                      <div class="notif-time">12 mins ago</div>
+                    </div>
+                  </div>
+                  <div class="notification-item unread success">
+                    <div class="notif-icon notif-icon-green"><i class="fa-solid fa-hospital-user"></i></div>
+                    <div class="notif-body">
+                      <div class="notif-title">OPD Shift Synced</div>
+                      <div class="notif-desc">Room 4 connected queue active. 4 patients registered for Dr. Rajesh.</div>
+                      <div class="notif-time">25 mins ago</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="dropdown-footer">
+                  <span class="text-muted"><i class="fa-solid fa-circle-check text-success"></i> Real-time clinic websocket live</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Header Clinic Menu Dropdown Wrap -->
+            <div class="action-dropdown-wrap">
+              <button id="btn-header-menu" class="icon-circle-btn" title="Clinic Menu" aria-label="Clinic Menu">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+              <div id="header-menu-dropdown" class="header-dropdown clinic-menu" style="display: none;">
+                <div class="menu-item-header">Clinic Management</div>
+                <button type="button" class="menu-action-item" id="menu-export-csv">
+                  <i class="fa-solid fa-file-csv text-primary"></i>
+                  <span>Export OPD Shift Log (CSV)</span>
+                </button>
+                <button type="button" class="menu-action-item" id="menu-switch-dept">
+                  <i class="fa-solid fa-stethoscope text-primary"></i>
+                  <span>Switch OPD Department</span>
+                </button>
+                <button type="button" class="menu-action-item" id="menu-reset-queue">
+                  <i class="fa-solid fa-rotate text-warning"></i>
+                  <span>Reset OPD Demo Patients</span>
+                </button>
+                <div class="menu-divider"></div>
+                <button type="button" class="menu-action-item" id="menu-toggle-fullscreen">
+                  <i class="fa-solid fa-expand text-success"></i>
+                  <span>Toggle Fullscreen / Kiosk</span>
+                </button>
+                <a href="/patient" target="_blank" class="menu-action-item">
+                  <i class="fa-solid fa-hands-holding-child text-success"></i>
+                  <span>Open Patient Easy Mode (New Tab)</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Integrated Search & Filter Row -->
+      <div class="header-search-row">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="global-patient-search" placeholder="Search patients by name, ID, or clinical complaint...">
+          <button id="btn-clear-search" class="clear-search-btn" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Pill Segmented Main Navigation -->
+        <div class="segmented-pill-nav">
+          <button class="seg-pill-btn active" data-view="view-opd-queue">
+            <i class="fa-solid fa-hospital-user"></i> OPD Triage
+          </button>
+          <button class="seg-pill-btn" data-view="view-patient-detail">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Recommendation
+          </button>
+          <button class="seg-pill-btn" data-view="view-analytics">
+            <i class="fa-solid fa-chart-pie"></i> Analytics
+          </button>
+          <button class="seg-pill-btn" data-view="view-drug-checker">
+            <i class="fa-solid fa-pills"></i> Drug Interactions
+          </button>
+          <button class="seg-pill-btn" data-view="view-health-calc">
+            <i class="fa-solid fa-calculator"></i> Health Metrics
+          </button>
+          <button class="seg-pill-btn" data-view="view-appointments">
+            <i class="fa-solid fa-calendar-check"></i> Appointments
+          </button>
+          <button class="seg-pill-btn" data-view="view-marketplace">
+            <i class="fa-solid fa-network-wired"></i> Agents
+          </button>
+          <button class="seg-pill-btn" data-view="view-fhir">
+            <i class="fa-solid fa-file-waveform"></i> FHIR R4
+          </button>
+          <a href="/patient" class="seg-pill-btn patient-nav-pill" style="text-decoration:none; background:rgba(5,205,153,0.2); color:#05cd99; border:1px solid #05cd99;">
+            <i class="fa-solid fa-hands-holding-child"></i> Patient Mode
+          </a>
+        </div>
+
+        <!-- Date Dropdown Filter -->
+        <div class="date-dropdown-wrap">
+          <button type="button" class="date-btn" id="btn-date-filter" aria-label="Filter Date" aria-expanded="false" aria-haspopup="true">
+            <span id="date-filter-label">Today</span> <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <button type="button" class="calendar-icon-btn" id="btn-calendar-icon" title="Select Date" aria-label="Select Date">
+            <i class="fa-regular fa-calendar-days"></i>
+          </button>
+          <input type="date" id="native-date-picker" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" tabindex="-1" aria-hidden="true">
+          <div id="date-filter-dropdown" class="header-dropdown date-menu" style="display: none;">
+            <div class="date-menu-header">
+              <span>Schedule & OPD Date</span>
+              <span class="date-live-pill"><i class="fa-solid fa-circle-dot"></i> Live Shift</span>
+            </div>
+            <div class="date-menu-option active" data-date-val="today">
+              <i class="fa-solid fa-calendar-day text-primary"></i>
+              <div class="date-opt-text">
+                <div class="date-opt-title" id="date-opt-today">Today</div>
+                <div class="date-opt-sub">Live Active OPD Clinic Shift</div>
+              </div>
+            </div>
+            <div class="date-menu-option" data-date-val="yesterday">
+              <i class="fa-solid fa-clock-rotate-left text-muted"></i>
+              <div class="date-opt-text">
+                <div class="date-opt-title" id="date-opt-yesterday">Yesterday</div>
+                <div class="date-opt-sub">Archive records & completed charts</div>
+              </div>
+            </div>
+            <div class="date-menu-option" data-date-val="tomorrow">
+              <i class="fa-solid fa-calendar-plus text-success"></i>
+              <div class="date-opt-text">
+                <div class="date-opt-title" id="date-opt-tomorrow">Tomorrow</div>
+                <div class="date-opt-sub">Scheduled follow-up bookings</div>
+              </div>
+            </div>
+            <div class="date-menu-option" data-date-val="week">
+              <i class="fa-solid fa-calendar-week text-primary"></i>
+              <div class="date-opt-text">
+                <div class="date-opt-title" id="date-opt-week">This Week</div>
+                <div class="date-opt-sub">Weekly OPD analytics view</div>
+              </div>
+            </div>
+            <div class="menu-divider" style="margin: 6px 0;"></div>
+            <div class="date-custom-input-box">
+              <label for="custom-date-select-input"><i class="fa-regular fa-calendar text-primary"></i> Pick Specific Date</label>
+              <input type="date" id="custom-date-select-input" class="custom-date-field">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Strip (rendered from the real current date by app.js) -->
+      <div class="calendar-strip-container">
+        <div class="calendar-month-selector">
+          <button class="cal-nav-btn" id="cal-prev-btn" title="Previous Week" aria-label="Previous Week"><i class="fa-solid fa-chevron-left"></i></button>
+          <span class="cal-month-title" id="cal-month-display" title="Jump to today" style="cursor:pointer;"></span>
+          <button class="cal-nav-btn" id="cal-next-btn" title="Next Week" aria-label="Next Week"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <div class="calendar-days-track" id="cal-days-track"></div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY CONTENT -->
+    <main class="main-content-area">
+      
+      <!-- SCREEN 1: OPD Patient Queue & Triage List (Inspired by Thumbnails) -->
+      <section id="view-opd-queue" class="app-screen active">
+        
+        <!-- Queue Filter Tabs -->
+        <div class="queue-toolbar">
+          <div class="queue-tabs">
+            <button class="queue-tab active" data-filter="all">All Patients (<span id="count-all">4</span>)</button>
+            <button class="queue-tab" data-filter="emergent">Critical & Emergent (<span id="count-emergent">2</span>)</button>
+            <button class="queue-tab" data-filter="urgent">Urgent (<span id="count-urgent">1</span>)</button>
+            <button class="queue-tab" data-filter="routine">Routine (<span id="count-routine">1</span>)</button>
+          </div>
+          <div class="queue-actions">
+            <!-- Inline AI Queue Preview Toggle -->
+            <label class="queue-ai-toggle" title="Toggle AI Diagnosis preview on patient cards">
+              <input type="checkbox" id="queue-ai-preview-toggle" checked>
+              <span class="q-toggle-pill"><i class="fa-solid fa-wand-magic-sparkles text-primary"></i> AI Preview</span>
+            </label>
+            <button id="btn-quick-new-patient" class="btn-primary-pill">
+              <i class="fa-solid fa-plus"></i> New Intake
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Kiosk Submissions (Patient-Doctor Bridge) -->
+        <div class="kiosk-live-feed-banner" id="kiosk-live-feed">
+          <div class="feed-header">
+            <div class="feed-title">
+              <span class="pulsing-radar-dot"></span>
+              <strong>Live Kiosk & Patient Mode Feed</strong>
+              <span class="badge-live-count" id="kiosk-waiting-count">1 In Queue</span>
+            </div>
+            <span class="feed-sub">Live submissions from Patient Easy Mode (/patient)</span>
+          </div>
+          <div class="kiosk-feed-cards" id="kiosk-feed-cards">
+            <!-- Populated via poll from /api/queue/active -->
+          </div>
+        </div>
+
+        <!-- Patient Cards Grid / List -->
+        <div class="patient-cards-grid" id="opd-patient-list">
+          <!-- Dynamically populated from patient queue -->
+        </div>
+
+      </section>
+
+      <!-- SCREEN 2: Patient Assessment & Multi-Agent Recommendation Screen -->
+      <section id="view-patient-detail" class="app-screen">
+        
+        <!-- Breadcrumb / Back button & AI Toggle -->
+        <div class="screen-back-bar">
+          <button id="btn-back-to-queue" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Patient Queue
+          </button>
+
+          <!-- Direct AI Recommendation Toggle on Patient Dashboard -->
+          <div class="ai-toggle-control-group">
+            <div class="ai-toggle-label">
+              <i class="fa-solid fa-brain" id="ai-toggle-icon"></i>
+              <span>AI Recommendations:</span>
+            </div>
+            <label class="switch-toggle" title="Toggle Real-Time AI Recommendations">
+              <input type="checkbox" id="ai-recommendation-toggle" checked>
+              <span class="slider round"></span>
+            </label>
+            <span class="ai-toggle-status" id="ai-toggle-status-text">Live Auto-Assist ON</span>
+          </div>
+
+          <div class="encounter-status-tag" id="current-encounter-status">
+            <span class="pulsing-green-dot"></span> Active Clinical Encounter
+          </div>
+        </div>
+
+        <!-- Patient Header Card (Like Frame 2 Patient Details) -->
+        <div class="patient-hero-card">
+          <div class="patient-hero-left">
+            <div class="patient-avatar-large" id="hero-avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Patient" id="hero-img">
+            </div>
+            <div class="patient-hero-info">
+              <div class="hero-name-row">
+                <h2 id="hero-name">Robert Miller</h2>
+                <span class="badge-acuity" id="hero-acuity-badge">ESI 2 • Emergent</span>
+              </div>
+              <div class="hero-meta-row">
+                <span id="hero-id"><i class="fa-solid fa-id-card"></i> PT-77014</span>
+                <span id="hero-demographics"><i class="fa-solid fa-user"></i> 58, Male</span>
+                <span id="hero-chief-short"><i class="fa-solid fa-stethoscope"></i> Retrosternal crushing chest pain</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="patient-hero-stats">
+            <div class="hero-stat-box">
+              <span class="h-stat-label">Blood Pressure</span>
+              <span class="h-stat-val text-emergent" id="hero-bp">168/96</span>
+            </div>
+            <div class="hero-stat-box">
+              <span class="h-stat-label">Heart Rate</span>
+              <span class="h-stat-val text-warning" id="hero-hr">106 bpm</span>
+            </div>
+            <div class="hero-stat-box">
+              <span class="h-stat-label">SpO2 (Pulse Ox)</span>
+              <span class="h-stat-val text-warning" id="hero-spo2">93.5%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Feature Action Buttons -->
+        <div class="patient-hero-actions">
+          <button id="btn-download-pdf" class="hero-action-btn" title="Download Clinical Report as PDF"><i class="fa-solid fa-file-pdf"></i> PDF Report</button>
+          <button id="btn-view-history" class="hero-action-btn" title="View Patient History Timeline"><i class="fa-solid fa-timeline"></i> History</button>
+          <button id="btn-view-qr" class="hero-action-btn" title="Generate QR Code Token"><i class="fa-solid fa-qrcode"></i> QR Token</button>
+        </div>
+
+        <!-- Clinical Workspace Layout -->
+        <div class="clinical-workspace-grid">
+          
+          <!-- LEFT: Patient Intake & Vitals Matrix -->
+          <div class="workspace-col-left">
+            <div class="panel-card">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <i class="fa-solid fa-clipboard-user text-primary"></i>
+                  <span>Patient Intake & Objective Vitals</span>
+                </div>
+                <button type="button" id="btn-edit-intake" class="btn-ghost-icon" title="Edit Intake Details">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+              </div>
+
+              <form id="patient-intake-form">
+                <!-- Demographics row -->
+                <div class="form-row">
+                  <div class="form-col col-4">
+                    <label>Patient ID</label>
+                    <input type="text" id="input-patient-id" value="PT-77014" required>
+                  </div>
+                  <div class="form-col col-5">
+                    <label>Full Name (PHI)</label>
+                    <input type="text" id="input-patient-name" value="Robert Miller">
+                  </div>
+                  <div class="form-col col-3">
+                    <label>Age</label>
+                    <input type="number" id="input-patient-age" value="58" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-col col-6">
+                    <label>Biological Sex</label>
+                    <select id="select-patient-gender">
+                      <option value="Male" selected>Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other / Non-Binary</option>
+                    </select>
+                  </div>
+                  <div class="form-col col-6">
+                    <label>Duration (Days)</label>
+                    <input type="number" id="input-symptom-duration" value="1">
+                  </div>
+                </div>
+
+                <!-- Chief Complaint with Voice Dictation -->
+                <div class="form-group">
+                  <div class="label-with-action">
+                    <label>Chief Complaint / Clinical Notes</label>
+                    <button type="button" id="btn-voice-dictate" class="dictation-pill-btn">
+                      <i class="fa-solid fa-microphone" id="mic-icon"></i> <span id="dictation-text">AI Voice Dictate</span>
+                    </button>
+                  </div>
+                  <div class="textarea-wrap">
+                    <textarea id="input-chief-complaint" rows="2">Retrosternal crushing chest pain radiating to left arm with cold diaphoresis and dyspnea.</textarea>
+                    <div id="dictation-wave" class="dictation-wave" style="display: none;">
+                      <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                      <span class="wave-msg">Transcribing clinical speech on-device...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Objective Vitals Matrix -->
+                <div class="vitals-matrix-container">
+                  <div class="vitals-matrix-header">
+                    <span><i class="fa-solid fa-heart-pulse text-danger"></i> Objective Vital Signs</span>
+                    <span class="vital-summary-pill" id="vitals-overall-status">Warning Vitals</span>
+                  </div>
+                  <div class="vitals-input-grid">
+                    <div class="vital-cell">
+                      <div class="v-label-row">
+                        <label>Heart Rate</label>
+                        <span id="badge-hr" class="v-eval-badge badge-warning">Tachycardia</span>
+                      </div>
+                      <div class="v-input-box">
+                        <input type="number" id="vital-hr" value="106">
+                        <span class="v-unit">bpm</span>
+                      </div>
+                    </div>
+
+                    <div class="vital-cell">
+                      <div class="v-label-row">
+                        <label>Blood Pressure (Sys)</label>
+                        <span id="badge-bpsys" class="v-eval-badge badge-danger">Stage 2 HTN</span>
+                      </div>
+                      <div class="v-input-box">
+                        <input type="number" id="vital-bpsys" value="168">
+                        <span class="v-unit">mmHg</span>
+                      </div>
+                    </div>
+
+                    <div class="vital-cell">
+                      <div class="v-label-row">
+                        <label>Blood Pressure (Dia)</label>
+                        <span id="badge-bpdia" class="v-eval-badge badge-warning">Elevated</span>
+                      </div>
+                      <div class="v-input-box">
+                        <input type="number" id="vital-bpdia" value="96">
+                        <span class="v-unit">mmHg</span>
+                      </div>
+                    </div>
+
+                    <div class="vital-cell">
+                      <div class="v-label-row">
+                        <label>SpO2 (Pulse Ox)</label>
+                        <span id="badge-spo2" class="v-eval-badge badge-warning">Mild Hypoxia</span>
+                      </div>
+                      <div class="v-input-box">
+                        <input type="number" step="0.1" id="vital-spo2" value="93.5">
+                        <span class="v-unit">%</span>
+                      </div>
+                    </div>
+
+                    <div class="vital-cell">
+                      <div class="v-label-row">
+                        <label>Temperature</label>
+                        <span id="badge-temp" class="v-eval-badge badge-normal">Afebrile</span>
+                      </div>
+                      <div class="v-input-box">
+                        <input type="number" step="0.1" id="vital-temp" value="37.1">
+                        <span class="v-unit">°C</span>
+                      </div>
+                    </div>
+
+                    <div class="vital-cell">
+                      <div class="v-label-row">
+                        <label>Respiration</label>
+                        <span id="badge-rr" class="v-eval-badge badge-warning">Tachypnea</span>
+                      </div>
+                      <div class="v-input-box">
+                        <input type="number" id="vital-rr" value="22">
+                        <span class="v-unit">/min</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Anatomical System Filter -->
+                <div class="anatomical-nav-bar">
+                  <span class="anat-label">System:</span>
+                  <div class="anat-buttons">
+                    <button type="button" class="body-zone-btn active" data-region="all">All</button>
+                    <button type="button" class="body-zone-btn" data-region="cardio">Cardio</button>
+                    <button type="button" class="body-zone-btn" data-region="respiratory">Respiratory</button>
+                    <button type="button" class="body-zone-btn" data-region="neuro">Neuro</button>
+                    <button type="button" class="body-zone-btn" data-region="gi">GI</button>
+                    <button type="button" class="body-zone-btn" data-region="systemic">Metabolic</button>
+                  </div>
+                </div>
+
+                <!-- Symptom Chips -->
+                <div class="form-group">
+                  <div class="label-with-action">
+                    <label>Reported Symptoms (<span id="symptom-selected-count">5</span> active)</label>
+                    <button type="button" id="btn-clear-symptoms" class="text-link-btn">Clear</button>
+                  </div>
+                  <div class="symptom-chips" id="symptom-chips-container">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Medical History & Allergies -->
+                <div class="form-row">
+                  <div class="form-col col-6">
+                    <label>Pre-Existing History</label>
+                    <input type="text" id="input-medical-history" value="Hypertension, Hyperlipidemia, Smoking">
+                  </div>
+                  <div class="form-col col-6">
+                    <label>Drug / Food Allergies</label>
+                    <input type="text" id="input-allergies" value="Penicillin">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Current Medications</label>
+                  <input type="text" id="input-medications" value="Atorvastatin 20mg, Amlodipine 5mg">
+                </div>
+
+                <!-- Execute Button -->
+                <button type="submit" id="btn-run-orchestrator" class="btn-navy-execute">
+                  <span class="btn-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                  <span class="btn-label">Run Multi-Agent Clinical Orchestration</span>
+                  <span class="btn-spinner" id="action-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- RIGHT: AI Recommendations, Specialist & Care Plan -->
+          <div class="workspace-col-right">
+            
+            <!-- AI Paused / Independent Clinical Assessment Banner -->
+            <div id="ai-disabled-banner" class="panel-card ai-paused-placeholder" style="display: none;">
+              <div class="ai-paused-content">
+                <div class="ai-paused-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                <h3>Doctor-Independent Clinical Assessment</h3>
+                <p>AI Decision Support & Multi-Agent suggestions are paused to eliminate diagnostic anchoring bias.</p>
+                <p class="ai-paused-hint">Examine patient, document symptoms and vitals independently, then flip the toggle to run instant consensus checks.</p>
+                <button type="button" class="btn-solid-blue" id="btn-enable-ai-quick">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Enable AI Recommendations
+                </button>
+              </div>
+            </div>
+
+            <!-- AI Recommendations Content Wrapper -->
+            <div id="ai-recommendations-wrapper">
+
+            <!-- Live Multi-Agent Pipeline Steps -->
+            <div class="panel-card pipeline-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <i class="fa-solid fa-microchip text-primary"></i>
+                  <span>Autonomous Multi-Agent Consensus Trace</span>
+                </div>
+                <span class="pipeline-status-badge" id="orchestrator-status-badge">Completed • 5 Agents</span>
+              </div>
+              <div class="pipeline-steps-row" id="pipeline-nodes-container">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Specialist Referral Recommendation Card (Thumbnail style) -->
+            <div class="panel-card specialist-recommend-card">
+              <div class="spec-header-row">
+                <div class="spec-title-group">
+                  <div class="spec-badge-label">RECOMMENDED CLINICAL SPECIALTY</div>
+                  <h3 id="specialist-name">Cardiology & Interventional Cardiac Care</h3>
+                  <p id="specialist-facility"><i class="fa-solid fa-hospital"></i> Emergency Cardiac Care Unit / Cath Lab</p>
+                </div>
+                <div class="spec-urgency-box">
+                  <span class="urgency-pill pill-emergent" id="specialist-urgency-badge">Emergent (1-2 Hours)</span>
+                </div>
+              </div>
+              <p class="spec-rationale-text" id="specialist-rationale">
+                Immediate clinical consultation indicated based on ischemic presentation and elevated blood pressure.
+              </p>
+              <div class="spec-actions-footer">
+                <button type="button" id="btn-book-consult" class="btn-solid-blue">
+                  <i class="fa-solid fa-calendar-check"></i> Book Consultation
+                </button>
+                <button type="button" id="btn-transfer-referral" class="btn-outline-navy">
+                  <i class="fa-solid fa-share-nodes"></i> Dispatch Direct Referral
+                </button>
+              </div>
+            </div>
+
+            <!-- Differential Diagnoses (ICD-10) -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <i class="fa-solid fa-disease text-primary"></i>
+                  <span>Differential Diagnoses & ICD-10 Attribution</span>
+                </div>
+                <span class="card-subtitle-tag" id="dx-count-tag">Top Matches</span>
+              </div>
+              <div class="dx-cards-list" id="differential-dx-list">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Evidence-Based Care Plan & Test Order Checklist -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <i class="fa-solid fa-clipboard-check text-success"></i>
+                  <span>Care Plan & Diagnostic Workup Checklist</span>
+                </div>
+                <span class="counter-badge" id="test-order-counter">0 of 5 Tests Ordered</span>
+              </div>
+              
+              <div class="care-plan-sections-grid">
+                <!-- Diagnostic tests with checkboxes -->
+                <div class="cp-block">
+                  <h4><i class="fa-solid fa-vial-virus text-primary"></i> Diagnostic Tests (Check to Order)</h4>
+                  <div id="plan-tests-checklist" class="plan-checklist"></div>
+                </div>
+
+                <!-- Immediate stabilization actions -->
+                <div class="cp-block">
+                  <h4><i class="fa-solid fa-bolt text-warning"></i> Immediate Clinical Actions</h4>
+                  <ul id="plan-immediate-actions" class="cp-bullet-list"></ul>
+                </div>
+
+                <!-- Non-pharmacological measures -->
+                <div class="cp-block">
+                  <h4><i class="fa-solid fa-bed text-success"></i> Supportive Measures</h4>
+                  <ul id="plan-non-pharm" class="cp-bullet-list"></ul>
+                </div>
+
+                <!-- Drug allergy & contraindication safeguards -->
+                <div class="cp-block alert-block">
+                  <h4><i class="fa-solid fa-triangle-exclamation text-danger"></i> Drug Allergy Guardrail</h4>
+                  <ul id="plan-cautions" class="cp-bullet-list danger"></ul>
+                </div>
+              </div>
+
+              <!-- Critical Red Flags Strip -->
+              <div class="red-flags-alert-strip">
+                <i class="fa-solid fa-radiation text-danger rf-icon"></i>
+                <div class="rf-content">
+                  <strong>Critical Deterioration Red Flags:</strong>
+                  <ul id="plan-red-flags" class="rf-list"></ul>
+                </div>
+              </div>
+            </div>
+
+            </div><!-- end #ai-recommendations-wrapper -->
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SCREEN 3: Agent Marketplace -->
+      <section id="view-marketplace" class="app-screen">
+        <div class="screen-title-banner">
+          <div>
+            <h2>Certified Medical AI Agent Marketplace</h2>
+            <p>Ecosystem of verified clinical micro-agents compliant with healthcare taxonomies (ICD-10, SNOMED CT, ESI Five-Level Standard).</p>
+          </div>
+          <div class="kpi-mini-box">
+            <span class="kpi-b-num">5</span>
+            <span class="kpi-b-lbl">Certified Micro-Agents</span>
+          </div>
+        </div>
+
+        <div class="marketplace-cards-grid" id="marketplace-agents-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- SCREEN 4: FHIR R4 Bundle & HIPAA Audit -->
+      <section id="view-fhir" class="app-screen">
+        <div class="screen-title-banner">
+          <div>
+            <h2>HL7 FHIR Release 4 & HIPAA Safe Harbor Audit</h2>
+            <p>Standardized interoperable clinical exchange and on-device privacy-preserving audit logs.</p>
+          </div>
+          <div class="fhir-toolbar-actions">
+            <button id="btn-copy-fhir" class="btn-outline-navy"><i class="fa-solid fa-copy"></i> Copy JSON</button>
+            <button id="btn-download-fhir" class="btn-solid-blue"><i class="fa-solid fa-download"></i> Export FHIR R4</button>
+          </div>
+        </div>
+
+        <div class="fhir-audit-split">
+          <div class="panel-card fhir-card">
+            <div class="code-header">
+              <span><i class="fa-solid fa-code"></i> HL7 FHIR R4 JSON Bundle (Patient, Observation, Condition, ServiceRequest)</span>
+              <span class="status-pill-green">Verified</span>
+            </div>
+            <pre class="json-viewer-pre"><code id="fhir-json-code">// Run an orchestration to view the live HL7 FHIR Bundle.</code></pre>
+          </div>
+
+          <div class="panel-card audit-card">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-shield-halved text-success"></i> HIPAA Safe Harbor & GDPR Telemetry</div>
+            </div>
+            <div class="audit-info-list">
+              <div class="audit-row">
+                <span class="audit-k">Masked Patient Identity:</span>
+                <span class="audit-v" id="audit-masked-name">R. M***</span>
+              </div>
+              <div class="audit-row">
+                <span class="audit-k">Audit Hash:</span>
+                <span class="audit-v font-mono" id="audit-hash-val">AUDIT-HASH-7F42A</span>
+              </div>
+              <div class="audit-row">
+                <span class="audit-k">De-identification Standard:</span>
+                <span class="audit-v text-success">HIPAA 45 CFR § 164.514(b)</span>
+              </div>
+              <div class="audit-row">
+                <span class="audit-k">GDPR Minimization:</span>
+                <span class="audit-v text-success">Verified (Processing limited)</span>
+              </div>
+            </div>
+            <div class="phi-box">
+              <label>Scrubbed Direct Identifiers:</label>
+              <div id="phi-mitigations-list" class="phi-tag-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 5: Dashboard Analytics -->
+      <section id="view-analytics" class="app-screen">
+        <div class="screen-title-banner">
+          <div>
+            <h2><i class="fa-solid fa-chart-pie text-primary"></i> OPD Analytics Dashboard</h2>
+            <p>Real-time clinic performance, patient volume, and triage distribution insights.</p>
+          </div>
+          <button class="btn-solid-blue" id="btn-refresh-analytics"><i class="fa-solid fa-rotate"></i> Refresh Data</button>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="analytics-kpi-row" id="analytics-kpi-row">
+          <div class="analytics-kpi-card"><div class="kpi-icon" style="background:#dbeafe;color:#2563eb;"><i class="fa-solid fa-users"></i></div><div><div class="kpi-big-val" id="analytics-total">—</div><div class="kpi-sub">Total Patients Today</div></div></div>
+          <div class="analytics-kpi-card"><div class="kpi-icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-clock"></i></div><div><div class="kpi-big-val" id="analytics-wait">—</div><div class="kpi-sub">Avg Wait (min)</div></div></div>
+          <div class="analytics-kpi-card"><div class="kpi-icon" style="background:#d1fae5;color:#059669;"><i class="fa-solid fa-robot"></i></div><div><div class="kpi-big-val" id="analytics-ai">—%</div><div class="kpi-sub">AI-Assisted</div></div></div>
+          <div class="analytics-kpi-card"><div class="kpi-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fa-solid fa-file-export"></i></div><div><div class="kpi-big-val" id="analytics-fhir">—</div><div class="kpi-sub">FHIR Exports</div></div></div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="analytics-charts-grid">
+          <div class="panel-card analytics-chart-card">
+            <h4><i class="fa-solid fa-circle-half-stroke text-primary"></i> Triage Distribution</h4>
+            <div id="chart-triage-dist" class="chart-container"></div>
+          </div>
+          <div class="panel-card analytics-chart-card">
+            <h4><i class="fa-solid fa-chart-bar text-primary"></i> Hourly Patient Flow</h4>
+            <div id="chart-hourly-flow" class="chart-container"></div>
+          </div>
+          <div class="panel-card analytics-chart-card">
+            <h4><i class="fa-solid fa-users-line text-primary"></i> Age Distribution</h4>
+            <div id="chart-age-dist" class="chart-container"></div>
+          </div>
+          <div class="panel-card analytics-chart-card">
+            <h4><i class="fa-solid fa-ranking-star text-primary"></i> Top Symptoms</h4>
+            <div id="chart-top-symptoms" class="chart-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 6: Drug Interaction Checker -->
+      <section id="view-drug-checker" class="app-screen">
+        <div class="screen-title-banner">
+          <div>
+            <h2><i class="fa-solid fa-pills text-warning"></i> Drug Interaction Checker</h2>
+            <p>Enter 2 or more medications to check for known drug-drug interactions, severity, and mechanisms.</p>
+          </div>
+        </div>
+
+        <div class="drug-checker-layout">
+          <div class="panel-card drug-input-panel">
+            <h4><i class="fa-solid fa-prescription-bottle-medical text-primary"></i> Enter Medications</h4>
+            <p class="text-muted" style="font-size:12px;">Enter medication names separated by commas, or one per line.</p>
+            <textarea id="drug-input-meds" rows="4" class="drug-input-textarea" placeholder="e.g. Atorvastatin, Amlodipine, Warfarin, Aspirin"></textarea>
+            <div class="drug-quick-presets">
+              <span class="text-muted" style="font-size:11px;">Quick presets:</span>
+              <button class="preset-pill" data-meds="Warfarin, Aspirin, Ibuprofen">Anticoag + NSAIDs</button>
+              <button class="preset-pill" data-meds="Metformin, Lisinopril, Atorvastatin">Diabetic Combo</button>
+              <button class="preset-pill" data-meds="Sumatriptan, Fluoxetine">Triptan + SSRI</button>
+              <button class="preset-pill" data-meds="Omeprazole, Clopidogrel">PPI + Antiplatelet</button>
+              <button class="preset-pill" data-meds="Albuterol, Propranolol">Beta-Agonist + Blocker</button>
+            </div>
+            <button id="btn-check-interactions" class="btn-navy-execute" style="margin-top:12px;">
+              <i class="fa-solid fa-magnifying-glass-chart"></i> Check Interactions
+            </button>
+          </div>
+
+          <div class="panel-card drug-results-panel" id="drug-results-panel">
+            <h4><i class="fa-solid fa-flask-vial text-primary"></i> Interaction Results</h4>
+            <div id="drug-results-content">
+              <div class="drug-empty-state"><i class="fa-solid fa-prescription" style="font-size:48px;color:var(--text-muted);"></i><p>Enter medications above and click "Check Interactions"</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 7: Health Metrics Calculator -->
+      <section id="view-health-calc" class="app-screen">
+        <div class="screen-title-banner">
+          <div>
+            <h2><i class="fa-solid fa-calculator text-success"></i> Health Metrics & Clinical Calculators</h2>
+            <p>Compute BMI, Body Surface Area, eGFR (kidney function), and MEWS (early warning score).</p>
+          </div>
+        </div>
+
+        <div class="health-calc-layout">
+          <div class="panel-card health-input-panel">
+            <h4><i class="fa-solid fa-weight-scale text-primary"></i> Patient Parameters</h4>
+            <div class="form-row"><div class="form-col col-6"><label>Weight (kg)</label><input type="number" id="calc-weight" placeholder="e.g. 75" step="0.1"></div><div class="form-col col-6"><label>Height (cm)</label><input type="number" id="calc-height" placeholder="e.g. 170" step="0.1"></div></div>
+            <div class="form-row"><div class="form-col col-4"><label>Age</label><input type="number" id="calc-age" placeholder="e.g. 45"></div><div class="form-col col-4"><label>Gender</label><select id="calc-gender"><option value="Male">Male</option><option value="Female">Female</option></select></div><div class="form-col col-4"><label>Serum Creatinine (mg/dL)</label><input type="number" id="calc-creatinine" placeholder="e.g. 1.1" step="0.01"></div></div>
+
+            <h4 style="margin-top:16px;"><i class="fa-solid fa-heart-pulse text-danger"></i> Vitals for MEWS Score</h4>
+            <div class="form-row"><div class="form-col col-3"><label>Heart Rate</label><input type="number" id="calc-hr" placeholder="bpm"></div><div class="form-col col-3"><label>Systolic BP</label><input type="number" id="calc-bp" placeholder="mmHg"></div><div class="form-col col-3"><label>Resp Rate</label><input type="number" id="calc-rr" placeholder="/min"></div><div class="form-col col-3"><label>Temp (°C)</label><input type="number" id="calc-temp" placeholder="°C" step="0.1"></div></div>
+            <div class="form-row"><div class="form-col col-6"><label>AVPU Level</label><select id="calc-avpu"><option value="A">A — Alert</option><option value="V">V — Voice responsive</option><option value="P">P — Pain responsive</option><option value="U">U — Unresponsive</option></select></div></div>
+
+            <button id="btn-calc-metrics" class="btn-navy-execute" style="margin-top:16px;"><i class="fa-solid fa-calculator"></i> Calculate All Metrics</button>
+            <button id="btn-calc-fill-patient" class="btn-outline-navy" style="margin-top:8px;" title="Auto-fill with current patient's vitals"><i class="fa-solid fa-user-check"></i> Fill from Current Patient</button>
+          </div>
+
+          <div class="panel-card health-results-panel">
+            <h4><i class="fa-solid fa-chart-column text-primary"></i> Results</h4>
+            <div id="health-results-content">
+              <div class="drug-empty-state"><i class="fa-solid fa-calculator" style="font-size:48px;color:var(--text-muted);"></i><p>Enter parameters and click "Calculate All Metrics"</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 8: Appointment Scheduler -->
+      <section id="view-appointments" class="app-screen">
+        <div class="screen-title-banner">
+          <div>
+            <h2><i class="fa-solid fa-calendar-check text-primary"></i> Appointment & Follow-Up Scheduler</h2>
+            <p>Schedule, manage, and track patient follow-up consultations.</p>
+          </div>
+          <button class="btn-solid-blue" id="btn-refresh-appointments"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+
+        <div class="appointments-layout">
+          <div class="panel-card appointment-form-panel">
+            <h4><i class="fa-solid fa-calendar-plus text-primary"></i> New Appointment</h4>
+            <div class="form-row"><div class="form-col col-6"><label>Patient ID</label><input type="text" id="appt-patient-id" placeholder="PT-XXXXX"></div><div class="form-col col-6"><label>Patient Name</label><input type="text" id="appt-patient-name" placeholder="Full Name"></div></div>
+            <div class="form-row"><div class="form-col col-6"><label>Specialty</label><select id="appt-specialty"><option>General Medicine</option><option>Cardiology</option><option>Pulmonology</option><option>Neurology</option><option>Endocrinology</option><option>Orthopedics</option><option>Dermatology</option><option>Gastroenterology</option></select></div><div class="form-col col-6"><label>Doctor</label><input type="text" id="appt-doctor" value="Dr. Rajesh"></div></div>
+            <div class="form-row"><div class="form-col col-6"><label>Date</label><input type="date" id="appt-date"></div><div class="form-col col-6"><label>Time Slot</label><select id="appt-time"><option>09:00 AM</option><option>09:30 AM</option><option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>02:00 PM</option><option>02:30 PM</option><option>03:00 PM</option><option>03:30 PM</option><option>04:00 PM</option><option>04:30 PM</option></select></div></div>
+            <div class="form-group"><label>Notes</label><textarea id="appt-notes" rows="2" placeholder="Follow-up notes, reason for appointment..."></textarea></div>
+            <div class="form-row"><div class="form-col col-6"><label>Urgency</label><select id="appt-urgency"><option value="routine">Routine</option><option value="priority">Priority (2-3 days)</option><option value="urgent">Urgent (Within 24h)</option></select></div><div class="form-col col-6" style="display:flex;align-items:flex-end;gap:8px;"><label class="switch-toggle" style="margin-bottom:8px;"><input type="checkbox" id="appt-followup"><span class="slider round"></span></label><span style="font-size:13px;color:var(--text-secondary);">Follow-Up Visit</span></div></div>
+            <button id="btn-create-appointment" class="btn-navy-execute" style="margin-top:12px;"><i class="fa-solid fa-calendar-check"></i> Schedule Appointment</button>
+          </div>
+
+          <div class="panel-card appointment-list-panel">
+            <h4><i class="fa-solid fa-list-check text-primary"></i> Scheduled Appointments <span class="counter-badge" id="appt-count-badge">0</span></h4>
+            <div id="appointments-list-content">
+              <div class="drug-empty-state"><i class="fa-solid fa-calendar" style="font-size:48px;color:var(--text-muted);"></i><p>No appointments scheduled yet</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Docked Navigation Bar (Matching Thumbnail Bottom Nav) -->
+    <nav class="bottom-dock-nav">
+      <button class="dock-nav-item active" data-nav="view-opd-queue">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </button>
+      <button class="dock-nav-item" data-nav="view-opd-queue">
+        <i class="fa-solid fa-file-lines"></i>
+        <span>OPD Queue</span>
+      </button>
+      <button class="dock-nav-item" data-nav="view-patient-detail">
+        <i class="fa-solid fa-user-doctor"></i>
+        <span>Patient Details</span>
+      </button>
+      <button class="dock-nav-item" data-nav="view-marketplace">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Clinical Agents</span>
+      </button>
+    </nav>
+
+    <!-- Floating Action Button (FAB) (Inspired by the Blue '+' in Thumbnails) -->
+    <button id="fab-new-patient" class="floating-fab" title="Quick Add Patient Intake" aria-label="Add Patient">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <!-- Floating AI Clinical Co-Pilot Chat Drawer -->
+    <div class="copilot-widget">
+      <button id="copilot-toggle-btn" class="copilot-fab" title="Open AI Clinical Assistant">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span class="copilot-fab-label">AI Co-Pilot</span>
+        <span class="copilot-badge-dot"></span>
+      </button>
+
+      <div id="copilot-drawer" class="copilot-drawer" style="display: none;">
+        <div class="copilot-header">
+          <div class="copilot-header-brand">
+            <div class="copilot-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+            <div>
+              <div class="copilot-name">Triage Clinical Assistant</div>
+              <div class="copilot-sub" id="copilot-sub-label"><i class="fa-solid fa-shield-halved text-success"></i> Local Ollama (On-Device • Private)</div>
+            </div>
+          </div>
+          <button id="btn-close-copilot" class="btn-close-copilot">&times;</button>
+        </div>
+
+        <div class="copilot-quick-prompts">
+          <button class="prompt-pill" data-prompt="Why was this triage level assigned?">Why this triage?</button>
+          <button class="prompt-pill" data-prompt="What are safe medication alternatives for the patient?">Allergy alternatives?</button>
+          <button class="prompt-pill" data-prompt="Explain the recommended diagnostic tests.">Explain tests</button>
+          <button class="prompt-pill" data-prompt="Provide a friendly clinical summary for the patient.">Patient summary</button>
+        </div>
+
+        <div class="copilot-messages" id="copilot-messages">
+          <div class="chat-msg bot">
+            <div class="msg-bubble">
+              Hello Dr. Rajesh! I am your <strong>Triage AI Clinical Co-Pilot</strong>. Select a patient or run an intake, and you can query triage acuity, contraindications, or test rationales.
+            </div>
+          </div>
+        </div>
+
+        <div class="copilot-input-bar">
+          <input type="text" id="copilot-input" placeholder="Ask clinical assistant...">
+          <button id="copilot-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Interactive Modal: Specialist Consultation Booking -->
+  <div id="booking-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-calendar-check text-primary"></i>
+          <span>Schedule Specialist Consultation</span>
+        </div>
+        <button type="button" id="btn-close-modal" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="booking-modal-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Modal: Differential Diagnosis Deep Dive -->
+  <div id="dx-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-stethoscope text-primary"></i>
+          <span id="dx-modal-title">Differential Diagnosis Clinical Review</span>
+        </div>
+        <button type="button" id="btn-close-dx-modal" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="dx-modal-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Modal: Dispatch Direct Referral -->
+  <div id="referral-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-share-nodes text-primary"></i>
+          <span id="referral-modal-title">Dispatch Direct Clinical Referral</span>
+        </div>
+        <button type="button" id="btn-close-referral-modal" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="referral-modal-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Modal: Doctor Profile & Shift Information -->
+  <div id="profile-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-user-doctor text-primary"></i>
+          <span>Physician Credentials & Shift Info</span>
+        </div>
+        <button type="button" id="btn-close-profile-modal" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="profile-modal-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Emergency SOS Floating Button -->
+  <button id="sos-emergency-btn" class="sos-floating-btn" title="Emergency SOS Protocol">
+    <i class="fa-solid fa-kit-medical"></i>
+    <span>SOS</span>
+  </button>
+
+  <!-- SOS Alert Modal -->
+  <div id="sos-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card" style="max-width:560px; border: 3px solid #dc2626;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#dc2626,#991b1b); color:white;">
+        <div class="modal-title" style="color:white;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>🚨 EMERGENCY SOS PROTOCOL</span>
+        </div>
+        <button type="button" id="btn-close-sos-modal" class="btn-close-modal" style="color:white;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row"><div class="form-col col-6"><label>Patient ID</label><input type="text" id="sos-patient-id" placeholder="PT-XXXXX"></div><div class="form-col col-6"><label>Patient Name</label><input type="text" id="sos-patient-name" placeholder="Name"></div></div>
+        <div class="form-row"><div class="form-col col-6"><label>Location</label><input type="text" id="sos-location" value="OPD Room 1"></div><div class="form-col col-6"><label>Emergency Type</label><select id="sos-type"><option value="code_blue">CODE BLUE — Cardiac/Respiratory Arrest</option><option value="code_red">CODE RED — Hemorrhage</option><option value="rapid_response">RAPID RESPONSE — Deterioration</option><option value="anaphylaxis">ANAPHYLAXIS — Allergic Reaction</option></select></div></div>
+        <div class="form-group"><label>Notes</label><textarea id="sos-notes" rows="2" placeholder="Additional clinical context..."></textarea></div>
+        <button id="btn-trigger-sos" class="btn-navy-execute" style="background:#dc2626; width:100%; font-size:16px; padding:14px;">
+          <i class="fa-solid fa-triangle-exclamation"></i> ACTIVATE EMERGENCY PROTOCOL
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOS Active Alert Banner (injected at top when active) -->
+  <div id="sos-active-banner" class="sos-active-banner" style="display:none;">
+    <div class="sos-banner-content">
+      <i class="fa-solid fa-circle-exclamation fa-beat-fade"></i>
+      <span id="sos-banner-text">EMERGENCY ACTIVE</span>
+      <button id="btn-resolve-sos-banner" class="btn-outline-navy" style="color:white;border-color:white;padding:4px 12px;font-size:11px;">Resolve</button>
+    </div>
+  </div>
+
+  <!-- Patient History Timeline Modal -->
+  <div id="history-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card" style="max-width:640px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-timeline text-primary"></i>
+          <span>Patient History Timeline</span>
+        </div>
+        <button type="button" id="btn-close-history-modal" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="history-modal-content">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qr-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card" style="max-width:400px; text-align:center;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-qrcode text-primary"></i>
+          <span>Patient Queue Token</span>
+        </div>
+        <button type="button" id="btn-close-qr-modal" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="qr-modal-content">
+        <!-- QR code populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

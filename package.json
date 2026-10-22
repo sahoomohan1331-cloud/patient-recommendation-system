@@ -1,0 +1,21 @@
+{
+  "name": "triage-patient-recommendation-system",
+  "version": "1.0.0",
+  "description": "Medical-Grade AI Assistant & Agent Orchestration Engine with FHIR Interoperability",
+  "main": "run.py",
+  "scripts": {
+    "dev": "python run.py",
+    "start": "python run.py",
+    "test": "python -m pytest"
+  },
+  "keywords": [
+    "medical-ai",
+    "healthcare",
+    "orchestration-engine",
+    "patient-recommendation",
+    "fhir-r4",
+    "hipaa"
+  ],
+  "author": "Triage Medical AI Foundation",
+  "license": "Apache-2.0"
+}

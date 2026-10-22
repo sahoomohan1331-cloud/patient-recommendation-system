@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triage | Patient Help (Easy Mode)</title>
+  <meta name="description" content="Picture and voice based health guidance for patients who cannot read. Tells you whether to go to emergency, see a doctor today, or rest at home.">
+  
+  <!-- Modern Typography Pairing: Plus Jakarta Sans (Headings) + Inter (Body) + JetBrains Mono (Data) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+Devanagari:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/patient.css">
+  <script src="/static/three.min.js"></script>
+</head>
+<body>
+  <!-- Persistent top bar: Home page link, restart assessment, audio replay, SOS -->
+  <header class="pm-topbar">
+    <div class="pm-topbar-left">
+      <a href="/" id="pm-btn-portal" class="pm-portal-btn" title="Main Clinician Dashboard / Home Page (मुख्य होम पेज)">
+        <svg class="pm-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Clinician OPD</span>
+      </a>
+      <span class="pm-topbar-divider"></span>
+      <span class="pm-desk-badge">
+        <span class="pm-pulse-dot"></span>
+        <span>Patient Help Desk</span>
+      </span>
+    </div>
+
+    <div class="pm-topbar-center">
+      <div class="pm-progress-wrap">
+        <div class="pm-progress" id="pm-progress" aria-hidden="true"></div>
+        <span class="pm-step-label" id="pm-step-label">Step 1 of 5</span>
+      </div>
+    </div>
+
+    <div class="pm-topbar-right">
+      <button id="pm-btn-home" class="pm-round-btn" aria-label="Start again" title="Restart assessment">
+        <svg class="pm-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+          <path d="M16 16h5v5"/>
+        </svg>
+      </button>
+      <button id="pm-btn-replay" class="pm-round-btn pm-replay" aria-label="Play the question again" title="Speak question aloud">
+        <svg class="pm-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+      </button>
+      <a id="pm-btn-sos" class="pm-sos" href="tel:108" aria-label="Emergency: call 108">
+        <svg class="pm-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span>108 SOS</span>
+      </a>
+    </div>
+  </header>
+
+  <div id="pm-voice-warning" class="pm-voice-warning" hidden></div>
+
+  <main class="pm-main">
+    <div class="pm-hero-header">
+      <div class="pm-phase-pill" id="pm-phase-pill">Clinical Triage Guidance</div>
+      <h1 id="pm-question" class="pm-question">Choose your language</h1>
+      <p id="pm-question-sub" class="pm-question-sub">Select your preferred language for spoken audio assistance and clinical questions.</p>
+    </div>
+    <div id="pm-screen" class="pm-screen"></div>
+  </main>
+
+  <footer class="pm-footer">
+    <button id="pm-btn-back" class="pm-nav-btn pm-back" hidden>
+      <svg class="pm-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      <span>Back</span>
+    </button>
+    <button id="pm-btn-next" class="pm-nav-btn pm-next" hidden>
+      <span>Next</span>
+      <svg class="pm-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+  </footer>
+
+  <p class="pm-disclaimer" id="pm-disclaimer"></p>
+
+  <!-- Printable slip (only visible when printing) -->
+  <section id="pm-print-slip" class="pm-print-slip" aria-hidden="true"></section>
+
+  <script src="/static/patient.js"></script>
+</body>
+</html>
