@@ -6,13 +6,13 @@ from models import PatientProfile, AgentExecutionTrace
 
 class ComplianceAgent:
     """
-    Ensures HIPAA Safe Harbor de-identification, GDPR data minimization,
-    and clinical decision support safety disclaimers.
+    Experimental privacy guardrail: basic regex de-identification, SHA-256 audit hashing,
+    and clinical decision support safety disclaimers (Not a certified HIPAA/GDPR audit).
     """
 
     def __init__(self):
-        self.name = "HIPAA & GDPR Compliance Guardrail"
-        self.role = "PHI Sanitization, Audit Logging & Regulatory Integrity"
+        self.name = "Privacy & De-Identification Guardrail"
+        self.role = "Experimental PHI Scrubbing & Audit Logging"
 
     def verify_and_sanitize(self, patient: PatientProfile) -> Tuple[Dict[str, Any], AgentExecutionTrace]:
         start_time = time.time()
@@ -53,7 +53,7 @@ class ComplianceAgent:
             "masked_patient_identity": name_masked,
             "phi_tokens_scrubbed": len(phi_detected),
             "phi_types_flagged": phi_detected,
-            "gdpr_data_minimization": "Verified (Processing limited to clinical decision support)",
+            "gdpr_data_minimization": "Simulated (Processing limited to prototype session)",
             "audit_hash": f"AUDIT-HASH-{audit_hash.upper()}",
             "compliance_check": "not_performed",
             "compliance_note": "This field reports that no formal compliance audit has been performed. See SAFETY.md.",

@@ -1065,8 +1065,8 @@ function initVoiceDictation() {
 
 // Pipeline Nodes
 const PIPELINE_NODES = [
-  { id: 'step-compliance', name: 'HIPAA Guardrail' },
-  { id: 'step-triage', name: 'ESI Triage' },
+  { id: 'step-compliance', name: 'Privacy Guardrail' },
+  { id: 'step-triage', name: 'Acuity Scoring' },
   { id: 'step-dx', name: 'Differential Dx' },
   { id: 'step-specialist', name: 'Specialist Match' },
   { id: 'step-protocol', name: 'Care Plan' }
@@ -1514,7 +1514,7 @@ function initKpiFilters() {
         document.getElementById('view-patient-detail')?.classList.add('active');
         document.querySelectorAll('.seg-pill-btn').forEach(b => b.classList.remove('active'));
         document.querySelector('.seg-pill-btn[data-view="view-patient-detail"]')?.classList.add('active');
-        showToast('Viewing AI Clinical Decision Support Workspace', 'info');
+        showToast('Viewing AI Clinical Decision Support Prototype', 'info');
       }
     });
   });

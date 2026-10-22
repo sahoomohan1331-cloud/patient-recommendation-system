@@ -3,25 +3,25 @@ from typing import List, Dict, Any
 MEDICAL_AGENT_CATALOG: List[Dict[str, Any]] = [
     {
         "id": "agent-esi-triage-v1",
-        "name": "ESI Triage & Acuity Evaluator",
+        "name": "Heuristic Acuity Evaluator",
         "version": "1.4.0",
-        "category": "Emergency & Acuity",
+        "category": "Emergency & Acuity Heuristic",
         "status": "ACTIVE",
-        "certification": "HIPAA Tier-1 / ESI Five-Level Standard",
+        "certification": "Heuristic Thresholds (Not Certified ESI)",
         "latency_avg_ms": 12.4,
         "accuracy_rating": 98.7,
-        "description": "Validates vitals, hemodynamics, and critical alerts to stratify patient risk."
+        "description": "Evaluates vitals and physiological thresholds to assign heuristic acuity (Not validated ESI)."
     },
     {
         "id": "agent-differential-dx-v2",
-        "name": "Differential Diagnostic Reasoner",
+        "name": "Keyword Diagnostic Reasoner",
         "version": "2.1.0",
-        "category": "Clinical Diagnostics",
+        "category": "Clinical Diagnostics (Heuristic)",
         "status": "ACTIVE",
-        "certification": "ICD-10-CM / SNOMED CT Ontology",
+        "certification": "Experimental ICD-10 Mapping",
         "latency_avg_ms": 18.2,
         "accuracy_rating": 96.2,
-        "description": "Ranks differential diagnoses with confidence scores using multi-symptom correlation."
+        "description": "Ranks candidate conditions using keyword matching against symptom corpus (Unvalidated prototype)."
     },
     {
         "id": "agent-specialist-matcher-v1",
@@ -29,43 +29,43 @@ MEDICAL_AGENT_CATALOG: List[Dict[str, Any]] = [
         "version": "1.2.0",
         "category": "Referral & Navigation",
         "status": "ACTIVE",
-        "certification": "ABMS Specialty Taxonomy",
+        "certification": "Specialty Taxonomy Heuristic",
         "latency_avg_ms": 9.8,
         "accuracy_rating": 97.5,
-        "description": "Directs patients to appropriate clinical specialists with urgency stratification."
+        "description": "Directs patients to appropriate clinical specialists using heuristic rule matching."
     },
     {
         "id": "agent-care-protocol-v2",
-        "name": "Clinical Protocol & Care Plan Agent",
+        "name": "Care Protocol & Suggestion Agent",
         "version": "2.0.1",
         "category": "Care Planning & Safety",
         "status": "ACTIVE",
-        "certification": "Evidence-Based Clinical Guidelines (AHA/ADA/GINA)",
+        "certification": "Rule-Based Care Guidance (Prototype)",
         "latency_avg_ms": 15.1,
         "accuracy_rating": 99.1,
-        "description": "Synthesizes diagnostic workups, non-pharmacologic interventions, and allergy alerts."
+        "description": "Suggests initial diagnostic workups, non-pharmacologic interventions, and allergy alerts."
     },
     {
         "id": "agent-hipaa-guardrail-v1",
-        "name": "HIPAA & GDPR Compliance Guardrail",
+        "name": "Privacy & De-Identification Guardrail",
         "version": "1.1.0",
         "category": "Privacy & Security",
         "status": "ACTIVE",
-        "certification": "HIPAA Safe Harbor / GDPR Article 9",
+        "certification": "Regex Masking (Not Certified HIPAA/GDPR)",
         "latency_avg_ms": 8.5,
         "accuracy_rating": 100.0,
-        "description": "Cryptographically audits transactions, masks 18 PHI identifiers, and enforces data minimization."
+        "description": "Computes SHA-256 audit hashes, scrubs basic identifiers via regex, and simulates data minimization."
     },
     {
         "id": "agent-pediatric-triage-v1",
-        "name": "Pediatric Acuity Screener",
+        "name": "Pediatric Acuity Screener (Preview)",
         "version": "0.9.0",
         "category": "Pediatrics",
-        "status": "LABS_PREVIEW",
-        "certification": "PEWS (Pediatric Early Warning Score)",
+        "status": "NOT_IMPLEMENTED_PREVIEW",
+        "certification": "Planned PEWS (Not Implemented)",
         "latency_avg_ms": 14.0,
-        "accuracy_rating": 95.0,
-        "description": "Specialized vital signs normalization calibrated for neonatal and adolescent demographics."
+        "accuracy_rating": 0.0,
+        "description": "Placeholder for pediatric vitals normalization; not implemented in current prototype."
     }
 ]
 

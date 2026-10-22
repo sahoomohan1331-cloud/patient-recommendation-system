@@ -11,12 +11,14 @@ if ENGINE_DIR not in sys.path:
 if __name__ == "__main__":
     banner = """
     ========================================================================
-     TRIAGE | Medical-Grade AI Assistant & Patient Recommendation Platform
+     TRIAGE | Experimental Clinical Triage Support Prototype
     ========================================================================
-     [+] Orchestration Engine: ACTIVE
-     [+] Medical Agent Marketplace: READY (5 core agents, 1 preview)
-     [+] Interoperability: HL7 FHIR Release 4
-     [+] Privacy & Security: HIPAA Safe Harbor & GDPR Guardrails Active
+     [+] Orchestration Engine: ACTIVE (Rule-based heuristics)
+     [+] Agent Catalog: READY (5 prototype agents, 1 preview)
+     [+] Interoperability: HL7 FHIR Release 4 (Draft JSON bundle export)
+     [+] Privacy & Security: Experimental Regex De-Identification & Audit Hash Active
+     [!] NOTICE: Experimental prototype only. Not clinically validated.
+                 Not a medical device. Clinician supervision required.
     ------------------------------------------------------------------------
      -> Local Access URL: http://localhost:8000
      -> Swagger API Docs: http://localhost:8000/docs

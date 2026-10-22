@@ -10,7 +10,7 @@ def export_to_fhir_r4(
     triage_category: str
 ) -> Dict[str, Any]:
     """
-    Transforms clinical decision outputs into an HL7 FHIR Release 4 compliant JSON Bundle.
+    Transforms clinical decision outputs into an HL7 FHIR Release 4 draft JSON Bundle structure.
     Includes Patient, Observation (Triage), Condition (Differential Diagnoses), and ServiceRequest (Referral).
     """
     now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()

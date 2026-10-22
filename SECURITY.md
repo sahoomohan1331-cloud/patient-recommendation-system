@@ -1,129 +1,59 @@
 # Security Policy
 
+> [!IMPORTANT]
+> **Research and Educational Prototype Notice**
+> Triage is an experimental software prototype for research and clinical workflow exploration. It is **not** a certified medical device, does **not** provide production-grade security or HIPAA/GDPR certification, and has **not** undergone formal security hardening, third-party penetration testing, or regulatory audits.
+>
+> For clinical safety boundaries, failure modes, and required compliance steps, see [SAFETY.md](file:///d:/patient%20recommendatin%20system/SAFETY.md).
+
 ## Security and Privacy Commitment
 
-At Triage, security and privacy are foundational principles, especially given our focus on healthcare applications. We are committed to:
+At Triage, security and privacy awareness are foundational principles for healthcare exploration. We are committed to:
 
-- Protecting patient data and privacy
-- Maintaining compliance with healthcare regulations
-- Promptly addressing security vulnerabilities
-- Providing transparent security practices
+- Transparently documenting current prototype capabilities and limitations
+- Striving toward regulatory alignment (HIPAA, GDPR, SaMD) in future iterations
+- Promptly addressing security vulnerabilities in our open-source codebase
+- Providing honest, evidence-based disclosures
 
 ## Supported Versions
 
-We provide security updates for the following versions:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| Version | Supported          | Status |
+| ------- | ------------------ | ------ |
+| 1.x.x   | :white_check_mark: | Experimental Prototype |
+| < 1.0   | :x:                | Deprecated |
 
 ## Reporting a Vulnerability
 
-We take all security vulnerabilities seriously. If you believe you've found a security issue in Triage, please follow these steps:
+If you discover a security vulnerability in this prototype:
 
-1. **Do not disclose the vulnerability publicly**
-2. **Email us at security@triage.ai** with:
-   - A description of the vulnerability
+1. **Do not disclose the vulnerability publicly.**
+2. Report the vulnerability via **GitHub Security Advisories** on the official repository:
+   `https://github.com/sahoomohan1331-cloud/patient-recommendation-system/security/advisories`
+3. Provide:
+   - A detailed description of the vulnerability
    - Steps to reproduce
    - Potential impact
-   - Any suggestions for mitigation
-3. **Expect an acknowledgment within 48 hours**
-4. We will investigate and keep you updated on our progress
+   - Suggested mitigations
+4. Maintainers will review and acknowledge the report in accordance with standard open-source advisory procedures.
 
-## Disclosure Policy
+## Current Prototype Posture vs. Target Production Architecture
 
-When we receive a security vulnerability report, we will:
+The table below clarifies what is implemented in the current code versus what remains a target for future phases:
 
-1. Confirm receipt of the report within 48 hours
-2. Provide an initial assessment within 7 days
-3. Aim to release a fix within 30 days, depending on complexity
-4. Coordinate with the reporter on the disclosure timeline
-5. Credit the reporter (unless anonymity is requested) when we disclose the issue
+| Capability | Current Prototype Status | Future Production Target Requirement |
+| :--- | :--- | :--- |
+| **Authentication & RBAC** | **NOT IMPLEMENTED**. In-memory mock session only. | JWT/OAuth2/OIDC, Multi-Factor Authentication (MFA), role-based access control. |
+| **Data Encryption at Rest** | **NOT IMPLEMENTED**. Data stored in memory / local state. | AES-256 or hardware-encrypted volume storage for all databases. |
+| **Data Encryption in Transit**| **NOT CONFIGURED**. Default local HTTP server. | TLS 1.3 enforced across all API endpoints and reverse proxies. |
+| **Hardware Secure Enclave** | **NOT IMPLEMENTED**. Pure Python runtime process. | Confidential computing / hardware enclave (e.g. AWS Nitro Enclaves, Intel SGX). |
+| **PHI De-Identification** | **EXPERIMENTAL REGEX**. Basic SSN, email, phone scrubbing. | Certified HIPAA Safe Harbor de-identification engine with ML NER & validation. |
+| **Audit Logging** | **IN-MEMORY SHA-256 HASH**. Ephemeral session hash. | Immutable, tamper-evident audit logging stored in compliant SIEM / WORM storage. |
 
-## Security Best Practices for Deployment
+## Guidance for Evaluators & Contributors
 
-When deploying Triage in a healthcare environment, we recommend:
+When evaluating this prototype:
 
-1. **Access Control**
-   - Implement strong authentication mechanisms
-   - Use role-based access control
-   - Regularly audit access logs
+1. **Never input real Patient Health Information (PHI)** into local or shared instances.
+2. **Do not expose development instances** (`run.py` on port 8000) directly to the public internet without an authenticating reverse proxy and TLS certificate.
+3. **Always review [SAFETY.md](file:///d:/patient%20recommendatin%20system/SAFETY.md)** prior to testing clinical heuristics.
 
-2. **Data Protection**
-   - Encrypt data at rest and in transit
-   - Implement proper backup procedures
-   - Use secure deletion practices for sensitive data
-
-3. **Network Security**
-   - Deploy behind a firewall
-   - Use TLS 1.3 for all connections
-   - Implement network segmentation for healthcare environments
-
-4. **Compliance**
-   - Ensure HIPAA compliance for US deployments
-   - Follow GDPR requirements for EU deployments
-   - Maintain audit trails for all data access
-
-5. **Regular Updates**
-   - Keep Triage and all dependencies up to date
-   - Subscribe to our security announcements
-   - Implement a patch management process
-
-## Healthcare-Specific Security Considerations
-
-As a medical AI platform, Triage has additional security considerations:
-
-1. **PHI Protection**
-   - All Protected Health Information (PHI) should be handled according to applicable regulations
-   - Use the built-in anonymization features for any data sharing
-   - Enable audit logging for all PHI access
-
-2. **AI Model Security**
-   - Validate AI models before deployment in clinical settings
-   - Be aware of potential data poisoning or adversarial attacks
-   - Implement human oversight for critical AI decisions
-
-3. **Medical Device Regulations**
-   - If using Triage as part of a medical device, ensure compliance with relevant regulations (FDA, CE, etc.)
-   - Maintain documentation of validation and verification processes
-   - Implement risk management procedures
-
-## Security Features
-
-Triage includes several built-in security features:
-
-1. **End-to-End Encryption**
-   - All sensitive data is encrypted in transit and at rest
-   - Local processing of sensitive information where possible
-
-2. **Secure Enclave**
-   - Hardware-backed secure environment for processing sensitive data
-   - Protection against unauthorized access
-
-3. **Audit Logging**
-   - Comprehensive logging of all system activities
-   - Tamper-evident logs for compliance purposes
-
-4. **Access Controls**
-   - Fine-grained permission system
-   - Multi-factor authentication support
-   - Session management and automatic timeouts
-
-## Security Updates
-
-We will announce security updates through:
-
-- Our security mailing list (subscribe at security-updates@triage.ai)
-- GitHub Security Advisories
-- Release notes for each version
-
-## Bug Bounty Program
-
-We are committed to working with the security research community to identify and address vulnerabilities. Details of our bug bounty program will be announced as the project matures.
-
-## Contact
-
-For security-related inquiries, please contact:
-- Email: security@triage.ai
-- PGP Key: [Available on our security page](https://triage.ai/security)

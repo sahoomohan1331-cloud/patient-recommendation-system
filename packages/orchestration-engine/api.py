@@ -28,8 +28,8 @@ import patient_mode
 from llm_client import llm_client
 
 app = FastAPI(
-    title="Triage Medical AI Assistant & Orchestration Platform",
-    description="Medical-grade AI clinical decision support, agent orchestration, and patient recommendation engine",
+    title="Triage AI Triage Support Prototype",
+    description="Experimental AI clinical decision support heuristics, agent orchestration, and patient recommendation prototype (Research & Prototype Only — Not a Medical Device)",
     version="1.1.0"
 )
 
@@ -380,10 +380,10 @@ class ChatQuery(BaseModel):
 def health_check():
     return {
         "status": "healthy",
-        "platform": "Triage Medical AI",
+        "platform": "Triage Prototype",
         "version": "1.1.0",
         "active_agents": 5,
-        "compliance_mode": "HIPAA & GDPR Enforced"
+        "compliance_mode": "Experimental Regex Scrubbing (Not Audited — Prototype Only)"
     }
 
 @app.get("/api/sample-cases")
@@ -612,7 +612,7 @@ def generate_clinical_report(req: ReportRequest):
 <body>
 <div class="header">
     <h1>🏥 Triage Clinical Assessment Report</h1>
-    <p>Medical-Grade AI-Assisted Clinical Decision Support</p>
+    <p>Experimental AI-Assisted Clinical Decision Support Prototype (Educational & Research Use Only)</p>
     <p><strong>Generated:</strong> {now_str}</p>
     <span class="badge badge-{'emergent' if req.triage_level <= 2 else 'urgent' if req.triage_level == 3 else 'routine'}">{req.triage_category}</span>
 </div>
@@ -621,7 +621,7 @@ def generate_clinical_report(req: ReportRequest):
     <p><strong>Patient ID:</strong> {req.patient_id}</p>
     <p><strong>Name:</strong> {req.patient_name}</p>
     <p><strong>Age / Sex:</strong> {req.age} / {req.gender}</p>
-    <p><strong>ESI Triage Level:</strong> {req.triage_level}</p>
+    <p><strong>Heuristic Acuity Level (Not ESI):</strong> {req.triage_level}</p>
     <p style="grid-column: span 2;"><strong>Chief Complaint:</strong> {req.chief_complaint}</p>
 </div>
 
@@ -652,8 +652,8 @@ def generate_clinical_report(req: ReportRequest):
 </div>
 
 <div class="footer">
-    <p>🔒 HIPAA Compliant • AI-Assisted (Not a substitute for clinical judgment)</p>
-    <p>Triage Medical AI Platform v1.1.0 • {now_str}</p>
+    <p>⚠️ Experimental Prototype • Not Clinically Validated • Not a Medical Device • Supervising Clinician Review Required</p>
+    <p>Triage Prototype v1.1.0 • {now_str}</p>
 </div>
 </body>
 </html>"""
