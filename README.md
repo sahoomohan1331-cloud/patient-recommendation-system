@@ -1,136 +1,129 @@
-# Triage
+# Triage — Experimental Clinician-Supervised Triage Support Prototype
 
-<p align="center">
-  <img src="docs/assets/Isaree Main Logo 800x600.jpg" alt="Triage Logo" width="200"/>
-</p>
+> [!CAUTION]
+> **NOT A MEDICAL DEVICE • NOT FOR CLINICAL USE • PROTOTYPE ONLY**  
+> Triage is an **experimental research prototype**, not a certified medical device (Software as a Medical Device / SaMD). It has **not been clinically validated** and has **not been evaluated or approved by the FDA, CDSCO, CE, or any regulatory body**. This software must **never be used for actual patient care, diagnostic decisions, or autonomous emergency triage**. It requires direct, qualified clinician supervision at all times.
 
-<p align="center">
-  <a href="https://github.com/triage/triage/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
-  <a href="https://github.com/triage/triage/releases"><img src="https://img.shields.io/github/v/release/triage/triage" alt="Latest Release"></a>
-  <a href="https://github.com/triage/triage/stargazers"><img src="https://img.shields.io/github/stars/triage/triage" alt="GitHub stars"></a>
-</p>
+Triage is an open-source, experimental software prototype exploring human-supervised triage workflows, patient self-intake interfaces, and multi-agent clinical decision support heuristics. The project pairs an on-device, low-literacy patient kiosk mode (featuring a 3D anatomical model and 8 Indian languages) with an Outpatient Department (OPD) review dashboard for supervising clinicians.
 
-## Medical-Grade AI Assistant & Orchestration Platform
+---
 
-Triage is an open-source, medical-compliant AI Assistant and Agent Orchestration Engine designed to transform healthcare workflows. Our platform combines privacy-preserving on-device processing with powerful cloud capabilities to deliver secure, efficient, and compliant AI solutions for healthcare professionals.
+## What This Project Is vs. What This Project Is Not
 
-> **IMPORTANT**: Triage is currently in development and not yet ready for clinical use. All components are provided for research and development purposes only.
+| What This Project IS | What This Project IS NOT |
+|---|---|
+| **An experimental software prototype** exploring computer-assisted clinical triage and intake workflows. | **NOT a medical device** or autonomous diagnostic instrument. |
+| **A heuristic rule engine** demonstrating how vital signs and reported symptoms can be mapped to acuity categories. | **NOT validated ESI (Emergency Severity Index)**. It uses simplified, non-validated threshold rules. |
+| **A patient self-intake concept** with 3D body interaction, Wong-Baker FACES pain scale, and 8 Indian languages. | **NOT a substitute for medical triage**. Patients are directed to call 108 emergency services for red-flag symptoms. |
+| **A proof-of-concept multi-agent pipeline** demonstrating modular separation of concerns (triage, ICD-10 attribution, specialty matching). | **NOT an autonomous clinical decision-maker**. Every suggestion requires qualified physician verification. |
+| **A prototype data pipeline** generating draft HL7 FHIR Release 4 JSON bundles for educational interoperability testing. | **NOT certified HIPAA or GDPR compliant**. No formal third-party compliance audit has been performed. |
 
-## Key Features
+---
 
-- **Privacy-First Architecture**: On-device processing for sensitive data with end-to-end encryption
-- **Multi-Modal Input Processing**: Handle speech, text, and images with medical context awareness
-- **Compliant by Design**: Designed from the ground up for HIPAA, GDPR, and other healthcare regulations
-- **AI Agent Marketplace**: Ecosystem for specialized medical AI agents with rigorous verification
-- **Orchestration Engine**: Coordinate multiple AI agents for complex healthcare workflows
-- **Healthcare Integration**: Connect with existing healthcare systems through standard protocols and APIs
+## Prototype Features (Reframed to Reality)
 
-## Project Status
+- **Heuristic Acuity Scoring (Not Validated ESI)**: Evaluates input vital signs (heart rate, blood pressure, SpO2, respiratory rate, temperature) against basic physiological ranges to assign an experimental acuity indicator (simulated levels 1 through 5).
+- **Keyword-Based Differential Suggestions (Not Clinical Diagnoses)**: Matches patient-reported complaints and symptom keywords against an in-memory dictionary to suggest potential ICD-10 code attributions with heuristic confidence scores.
+- **Rule-Based Specialty Referral Matching**: Associates suggested condition clusters with relevant hospital specialties (e.g., Cardiology, Pulmonology, Neurology) for clinician review.
+- **Workup & Red-Flag Checklist**: Generates a standardized initial care plan draft, diagnostic test suggestions, and acute deterioration warnings based on rule templates.
+- **Patient Kiosk Mode (`/patient`)**: A touch-first self-intake interface designed for low-literacy patients:
+  - Rotatable 360° 3D anatomical mannequin (Three.js WebGL) for body region selection.
+  - Simplified Wong-Baker FACES pain scale (scores 0 to 10).
+  - 8 Indian languages (English, Hindi, Odia, Bengali, Tamil, Telugu, Marathi, Gujarati) with browser-based voice synthesis and speech input.
+  - Conservative Red / Yellow / Green action directives (patients never see speculative diagnosis names or confidence percentages).
+- **Draft HL7 FHIR Release 4 Bundle Export**: Converts triage encounter records into prototype FHIR R4 JSON bundles (`Patient`, `Observation`, `Condition`, `ServiceRequest`).
+- **Optional Local LLM Integration**: Connects locally to an Ollama instance (`http://127.0.0.1:11434`) for conversational reasoning, with deterministic rule-based fallback if Ollama is unavailable.
+- **Basic De-Identification Heuristics**: Applies regular expression scrubbing for common identifiers (SSN, phone, email) and masks names before internal agent dispatch. *(Note: This is an experimental regex scrubber, not a verified HIPAA Safe Harbor certification).*
 
-Triage is in active development. We're building the foundation for a robust, medical-grade AI platform and invite contributors to join us in this mission. Currently, we're focusing on:
+---
 
-- On Device AI transcription and AI Assistance
-- Core architecture and infrastructure
-- Security and compliance frameworks
-- Client-side processing capabilities
-- Agent orchestration protocols
+## Quickstart
 
-## Getting Started
-
-> Note: As Triage is in early development, these instructions will evolve as the project matures.
-
-### Prerequisites
-
-- Node.js 18+
-- Python 3.9+
-- Docker (for containerized development)
-
-### Development Setup
+Follow these exact steps from a clean clone to run the project locally:
 
 ```bash
-# Clone the repository
-git clone https://github.com/triage/triage.git
-cd triage
+# 1. Clone the repository
+git clone https://github.com/sahoomohan1331-cloud/patient-recommendation-system.git
 
-# Install dependencies
-npm install
+# 2. Navigate to the project directory
+cd patient-recommendation-system
 
-# Run development environment
-npm run dev
+# 3. Install pinned Python dependencies
+pip install -r requirements.txt
+
+# 4. Start the application
+python run.py
 ```
 
-## Architecture Overview
+Once started, open your web browser:
+- **Clinician OPD Dashboard**: [http://localhost:8000](http://localhost:8000)
+- **Patient Kiosk Easy Mode**: [http://localhost:8000/patient](http://localhost:8000/patient)
+- **Interactive OpenAPI Docs (Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-Triage consists of five main layers:
+*(Optional npm convenience: If Node.js is installed, `npm run dev` and `npm test` can also be run. These invoke `python run.py` and `pytest` under the hood).*
 
-1. **Client Layer**: On-device AI assistant with privacy-preserving processing
-2. **Security & Compliance Layer**: Ensures adherence to healthcare regulations
-3. **Medical AI Agent Marketplace**: Ecosystem for specialized medical AI agents
-4. **Medical-Grade AI Orchestration Platform**: Core orchestration engine
-5. **Integration and Data Layers**: Connects with healthcare systems and data sources
+---
 
-<p align="center">
-  <img src="docs/assets/architecture-overview.png" alt="Triage Architecture (coming soon)" width="600"/>
-</p>
+## Running the Automated Test Suite
 
-## Contributing
+The test suite validates queue state transitions, rule evaluations, boundary cases, and patient mode multilingual catalogs:
 
-We welcome contributions from developers, healthcare professionals, researchers, and anyone interested in advancing medical AI. Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
+```bash
+pytest
+```
 
-### Areas Where We Need Help
+---
 
-- Security and compliance implementation
-- Medical NLP models and processing
-- Healthcare integration standards
-- UI/UX for clinical workflows
-- Testing and validation frameworks
+## Repository Architecture
 
-## Roadmap
+```
+patient-recommendation-system/
+├── run.py                             # Server bootstrap (Uvicorn on port 8000)
+├── requirements.txt                   # Pinned Python runtime & test dependencies
+├── package.json                       # Optional npm script wrappers
+├── SAFETY.md                          # Clinical limitations, failure modes & safety posture
+├── model_capabilities.yaml            # Specification of agent contracts
+├── packages/
+│   ├── client-layer/                  # Frontend UI (Vanilla HTML5 / CSS3 / ES6 JS)
+│   │   └── static/
+│   │       ├── index.html             # Clinician OPD dashboard
+│   │       ├── style.css              # Dashboard styles (light & dark modes)
+│   │       ├── app.js                 # Dashboard logic & queue handling
+│   │       ├── patient.html           # Patient self-intake kiosk interface
+│   │       ├── patient.css            # Patient mode styles
+│   │       ├── patient.js             # Patient mode logic, 3D mannequin, TTS/STT
+│   │       └── three.min.js           # Three.js WebGL graphics library
+│   ├── orchestration-engine/          # Core Python logic & REST API
+│   │   ├── api.py                     # FastAPI routes & endpoints
+│   │   ├── engine.py                  # Multi-agent coordination pipeline
+│   │   ├── models.py                  # Pydantic data schemas
+│   │   ├── patient_mode.py            # Multilingual catalogs & rule-based triage
+│   │   ├── llm_client.py              # Local Ollama client with deterministic fallback
+│   │   └── agents/                    # Modular rule-based agent implementations
+│   │       ├── compliance_agent.py    # De-identification regex & audit hash
+│   │       ├── triage_agent.py        # Heuristic acuity scoring (simulated ESI)
+│   │       ├── diagnosis_agent.py     # Keyword-based differential diagnosis mapping
+│   │       ├── specialist_agent.py    # Specialty referral heuristics
+│   │       └── treatment_agent.py     # Care plan & workup checklist templates
+│   ├── agent-marketplace/             # Agent registration & discovery prototype
+│   │   └── marketplace.py             # In-memory catalog of agents
+│   ├── integration-layer/             # Interoperability prototype
+│   │   └── fhir_converter.py          # HL7 FHIR R4 JSON bundle generator
+│   └── security-compliance/           # Architectural security notes
+└── tests/
+    ├── test_opd_queue.py              # OPD queue endpoints and status polling tests
+    ├── test_orchestration.py          # Orchestration pipeline and vital sign tests
+    └── test_patient_mode.py           # Patient mode, languages & emergency rule tests
+```
 
-Our development roadmap is organized into phases:
+---
 
-1. **Foundation Phase** (Current): Core architecture, security framework, and basic functionality
-2. **Expansion Phase**: Enhanced capabilities, initial agent marketplace, and integration APIs
-3. **Ecosystem Phase**: Comprehensive agent ecosystem, advanced orchestration, and clinical validation
+## Safety & Clinical Limitations
 
-See our detailed [Roadmap (public  version in progress)](docs/roadmap/README.md) for more information.
+For a detailed analysis of known failure modes, missing pediatric thresholds, local LLM fallback behaviors, and regulatory prerequisites, please read [SAFETY.md](SAFETY.md).
 
-## Compliance & Security
-
-Triage is designed with healthcare compliance as a foundational principle:
-
-- End-to-end encryption for all sensitive data
-- HIPAA-aligned security controls
-- Privacy-preserving processing architecture
-- Comprehensive audit logging
-- Transparent data governance
-
-For more details, see our [Compliance Documentation](docs/compliance/README.md).
+---
 
 ## License
 
-Triage is licensed under the [Apache License 2.0](LICENSE).
-
-## Community
-
-- [GitHub Discussions](https://github.com/triage/triage/discussions) - For questions and community discussions
-- [Issue Tracker](https://github.com/triage/triage/issues) - For bugs and feature requests
-- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to the project
-
-## Citation
-
-If you use Triage in your research, please cite:
-
-```bibtex
-@software{triage2025,
-  author = {Triage Team},
-  title = {Triage: Medical-Grade AI Assistant & Orchestration Platform},
-  url = {https://github.com/triage/triage},
-  year = {2025},
-}
-```
-
-## Acknowledgments
-
-Triage is built on the shoulders of giants. We're grateful to the open-source community and the pioneering work in medical AI that makes this project possible.
-
+This project is licensed under the [Apache License 2.0](LICENSE).
