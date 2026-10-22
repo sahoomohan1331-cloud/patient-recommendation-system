@@ -1,0 +1,13 @@
+# Pinned runtime and test dependencies for Triage
+# Versions derived from the active environment running the application.
+
+# Core Web Framework & Server
+fastapi==0.141.1
+uvicorn==0.51.0
+pydantic==2.13.5
+python-multipart==0.0.32
+PyYAML==6.0.3
+
+# Testing & Client
+httpx==0.28.1
+pytest==7.4.3
